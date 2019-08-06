@@ -1,16 +1,14 @@
 <template>
   <div>
     <div
-      class="results"
-      v-bind:item="results"
-      v-for="(result) in resultsSorted"
+      v-for="(result) in results"
       v-bind:key="result._id"
-      v-bind:class="{'selected': result.selected}"
+      :class="{'selected': result.selected}"
+      @click="toggleSelected(result)"
     >
-      <a
-        @click="toggleSelected(result);"
-      >{{result.PlacePoints}} {{result.Name}} {{result.Team}} {{result.Time}} Display: {{result.display}} Selected: {{result.selected}}{{result.Course}}</a>
+      <a>{{result.PlacePoints}} {{result.Name}} {{result.Team}} {{result.Time}} Display: {{result.display}} Selected: {{result.selected}}{{result.Course}}</a>
     </div>
+    <div @click="toggleSelected(test)">{{test}}</div>
   </div>
 </template>
 
@@ -22,13 +20,36 @@ export default {
     return {};
   },
   created() {},
-  methods: {},
+  methods: {
+    sort: function() {
+      this.results.sort((a, b) => {
+        if (typeof a.PlacePoints === "string") {
+          return 1;
+        }
+        if (typeof b.PlacePoints === "string") {
+          return -1;
+        } else {
+          a.PlacePoints > b.PlacePoints ? 1 : -1;
+        }
+      });
+    },
+    toggleSelected: function(result) {
+      result.selected = !result.selected;
+      this.sort();
+    }
+  },
   computed: {
     resultsSorted() {
       return this.results.sort((a, b) =>
-        parseInt(a.PlacePoints) > parseInt(b.PlacePoints) ? 1 : -1
+        a.PlacePoints > b.PlacePoints ? 1 : -1
       );
     }
   }
 };
 </script>
+
+<style>
+.selected {
+  background-color: rgba(135, 207, 235, 0.281);
+}
+</style>

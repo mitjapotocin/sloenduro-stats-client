@@ -13,19 +13,9 @@
       <input v-model="selectedCourse" v-bind:value="course" type="radio" name="course" />
       <label>{{course}}</label>
     </div>
-    <div class="container">
-      <div v-if="loading" class="loadingcontainer">
-        <div class="spinner">
-          <div class="lds-facebook" loading>
-            <div></div>
-            <div></div>
-            <div></div>
-          </div>
-        </div>
-      </div>
-      {{noOfStages}}
-      <div v-if="results[1].Namsss">Mitja</div>
 
+    <div class="container">
+      <loading v-if="loading"></loading>
       <results-table v-bind:results="filteredResults"></results-table>
     </div>
   </div>
@@ -35,11 +25,12 @@
 import StatsService from "../StatsService";
 import TimeConversion from "../TimeConversion";
 import ResultsTable from "./ResultsTable";
-// import { SemipolarSpinner } from "epic-spinners";
+import Loading from "./Loading";
 
 export default {
   components: {
-    ResultsTable
+    ResultsTable,
+    Loading
   },
   name: "Event",
   data() {
@@ -82,19 +73,11 @@ export default {
           this.filteredResults.push(result);
         }
       });
-      this.sortList(this.filteredResults);
-      // this.updateSelectedList();
     },
 
-    // sortList: function(list = this.results) {
-    //   list.sort((a, b) =>
-    //     parseInt(a.PlacePoints) > parseInt(b.PlacePoints) ? 1 : -1
-    //   );
-    // },
     createChart: function() {
       function createChartSeries(data) {
         var series = [];
-        console.log(data.length);
         if (data.length > 0) {
           data.forEach(element => {
             if (element.Time !== "") {
@@ -153,14 +136,14 @@ export default {
       });
       return count;
     }
-  },
-  watch: {
-    selectedCourse: {
-      handler: function() {
-        this.filterList();
-      }
-    }
   }
+  // watch: {
+  //   selectedCourse: {
+  //     handler: function() {
+  //       this.filterList();
+  //     }
+  //   }
+  // }
 };
 </script>
 
@@ -221,44 +204,6 @@ button:focus {
   padding-right: 40px;
 }
 
-/* loader */
-.lds-facebook {
-  display: inline-block;
-  position: relative;
-  width: 64px;
-  height: 64px;
-}
-.lds-facebook div {
-  display: inline-block;
-  position: absolute;
-  left: 6px;
-  width: 13px;
-  background: rgb(185, 239, 255);
-  animation: lds-facebook 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
-}
-.lds-facebook div:nth-child(1) {
-  left: 6px;
-  animation-delay: -0.24s;
-}
-.lds-facebook div:nth-child(2) {
-  left: 26px;
-  animation-delay: -0.12s;
-}
-.lds-facebook div:nth-child(3) {
-  left: 45px;
-  animation-delay: 0;
-}
-@keyframes lds-facebook {
-  0% {
-    top: 6px;
-    height: 51px;
-  }
-  50%,
-  100% {
-    top: 19px;
-    height: 26px;
-  }
-}
 .selected {
   background-color: rgba(135, 207, 235, 0.281);
 }
