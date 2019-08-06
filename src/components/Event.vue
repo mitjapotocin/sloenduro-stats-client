@@ -3,33 +3,10 @@
     <div class="selectedcontainer">
       <h1>{{ $route.params.event}}</h1>
       <div id="scatter"></div>
-
-      <!-- <div id="scatterApexcharts"></div> -->
-      <!-- <div
-        class="post"
-        v-for="(post, index) in selectedPosts"
-        v-bind:item="post"
-        v-bind:index="text"
-        v-bind:key="post._id">
-        <a>
-          <button @click="deSelect(post)">-</button>
-          {{index}}{{post.name}}
-        </a>
-      </div>-->
     </div>
-    <!-- <H2>Selected</H2>
-    <div
-      class="results"
-      v-bind:item="selectedResults"
-      v-for="(result) in selectedResults"
-      v-bind:index="text"
-      v-bind:key="result._id"
-    >
-      <a
-        @click="toggleSelected(result);"
-      >{{result.PlacePoints}} {{result.Name}} {{result.Team}} {{result.Time}} Display: {{result.display}} Selected: {{result.selected}}</a>
-    </div>-->
+
     <h2>Riders</h2>
+
     <h2>{{selectedCourse}}</h2>
 
     <div v-for="(course, index) in courses" :key="index">
@@ -44,21 +21,12 @@
             <div></div>
             <div></div>
           </div>
-          <!-- <SemipolarSpinner :animation-duration="1100" :size="60" :color="'#ff1d5e'" /> -->
         </div>
       </div>
-      <div
-        class="results"
-        v-bind:item="results"
-        v-for="(result) in filteredResults"
-        v-bind:index="text"
-        v-bind:key="result._id"
-        v-bind:class="{'selected': result.selected}"
-      >
-        <a
-          @click="toggleSelected(result);"
-        >{{result.PlacePoints}} {{result.Name}} {{result.Team}} {{result.Time}} Display: {{result.display}} Selected: {{result.selected}}{{result.Course}}</a>
-      </div>
+      {{noOfStages}}
+      <div v-if="results[1].Namsss">Mitja</div>
+
+      <results-table v-bind:results="filteredResults"></results-table>
     </div>
   </div>
 </template>
@@ -66,13 +34,14 @@
 <script>
 import StatsService from "../StatsService";
 import TimeConversion from "../TimeConversion";
+import ResultsTable from "./ResultsTable";
 // import { SemipolarSpinner } from "epic-spinners";
 
 export default {
   components: {
-    // SemipolarSpinner
+    ResultsTable
   },
-  name: "PostComponent",
+  name: "Event",
   data() {
     return {
       loading: true,
@@ -103,16 +72,6 @@ export default {
   },
 
   methods: {
-    updateSelectedList: function() {
-      this.selectedResults = [];
-      this.results.forEach(result => {
-        if (result.selected == true) {
-          this.selectedResults.push(result);
-        }
-      });
-      this.createChart();
-    },
-
     filterList: function() {
       this.filteredResults = [];
       this.results.forEach(result => {
@@ -126,18 +85,12 @@ export default {
       this.sortList(this.filteredResults);
       // this.updateSelectedList();
     },
-    toggleSelected: function(result) {
-      result.selected == true
-        ? (result.selected = false)
-        : (result.selected = true);
-      this.sortList();
-      this.updateSelectedList();
-    },
-    sortList: function(list = this.results) {
-      list.sort((a, b) =>
-        parseInt(a.PlacePoints) > parseInt(b.PlacePoints) ? 1 : -1
-      );
-    },
+
+    // sortList: function(list = this.results) {
+    //   list.sort((a, b) =>
+    //     parseInt(a.PlacePoints) > parseInt(b.PlacePoints) ? 1 : -1
+    //   );
+    // },
     createChart: function() {
       function createChartSeries(data) {
         var series = [];
@@ -190,10 +143,18 @@ export default {
   computed: {
     courses() {
       return [...new Set(this.results.map(result => result.Course))].sort();
+    },
+
+    //TODO da se izracinat iz stevila keyev
+    noOfStages() {
+      let count = 0;
+      Object.keys(this.results[0]).forEach(key => {
+        if (key.slice(0, 11) == "ControlName") count++;
+      });
+      return count;
     }
   },
   watch: {
-    // whenever question changes, this function will run
     selectedCourse: {
       handler: function() {
         this.filterList();
@@ -305,4 +266,3 @@ button:focus {
 
 
 
-// TODO:sort not working properly, make a toggle button between short and long race.
