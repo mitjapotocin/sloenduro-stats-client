@@ -1,9 +1,8 @@
 <template>
   <div>
-    <div class="selectedcontainer">
-      <h1>{{ $route.params.event}}</h1>
-      <div id="scatter"></div>
-    </div>
+    <h1>{{ $route.params.event}}</h1>
+    <div id="scatter"></div>
+    <vue-apex-charts type="scatter" :options="options2" :series="series2"></vue-apex-charts>
 
     <h2>Riders</h2>
 
@@ -26,9 +25,12 @@ import StatsService from "../StatsService";
 import TimeConversion from "../TimeConversion";
 import ResultsTable from "./ResultsTable";
 import Loading from "./Loading";
+import ApexCharts from "apexcharts";
+import VueApexCharts from "vue-apexcharts";
 
 export default {
   components: {
+    VueApexCharts,
     ResultsTable,
     Loading
   },
@@ -56,18 +58,15 @@ export default {
 
     this.results.forEach(result => {
       this.$set(result, "selected", false);
-
-      result.selected = false;
     });
-    this.loading = false;
     this.selectedCourse = this.courses[0];
     this.filterList();
     this.updateSelectedList();
+    this.loading = false;
   },
 
   methods: {
     updateSelectedList: function() {
-      console.log("inseide updateselectedlist");
       this.selectedResults = [];
       this.filteredResults.forEach(result => {
         if (result.selected == true) {
@@ -111,6 +110,16 @@ export default {
 
       var options = {
         chart: {
+          background: "#fff",
+          animations: {
+            enabled: true,
+            easing: "easeinout",
+            speed: 800,
+            animateGradually: {
+              enabled: true,
+              delay: 150
+            }
+          },
           height: 350,
           type: "scatter",
           zoom: {
@@ -120,15 +129,31 @@ export default {
         },
         series: createChartSeries(this.selectedResults),
         xaxis: {
+          title: {
+            text: "Time",
+            rotate: 90
+          },
           tickAmount: 10,
           labels: {
-            formatter: function(val) {
-              return parseFloat(val).toFixed(1);
+            formatter: function(value) {
+              return `${value.toFixed(3)} s`;
             }
           }
         },
         yaxis: {
-          tickAmount: 1
+          labels: {
+            show: false,
+            formatter: function(value) {
+              return `${value.toFixed(0)}.`;
+            }
+          },
+          title: {
+            text: "Position",
+            rotate: 90
+          },
+          //! this can cause issues if chart reation is moved into a component
+          //? tickAmound is calculated from this component data
+          tickAmount: this.selectedResults.length
         }
       };
       document.getElementById("scatter").innerHTML = "";
@@ -137,6 +162,76 @@ export default {
     }
   },
   computed: {
+    options2() {
+      return {
+        chart: {
+          background: "#fff",
+          animations: {
+            enabled: true,
+            easing: "easeinout",
+            speed: 800,
+            animateGradually: {
+              enabled: true,
+              delay: 150
+            }
+          },
+          height: 350,
+          type: "scatter",
+          zoom: {
+            enabled: true,
+            type: "xy"
+          }
+        },
+
+        xaxis: {
+          title: {
+            text: "Time",
+            rotate: 90
+          },
+          tickAmount: 10,
+          labels: {
+            formatter: function(value) {
+              return `${value.toFixed(3)} s`;
+            }
+          }
+        },
+        yaxis: {
+          labels: {
+            show: false,
+            formatter: function(value) {
+              return `${value.toFixed(0)}.`;
+            }
+          },
+          title: {
+            text: "Position",
+            rotate: 90
+          },
+          //! this can cause issues if chart reation is moved into a component
+          //? tickAmound is calculated from this component data
+          tickAmount: this.selectedResults.length
+        }
+      };
+    },
+    series2() {
+      var series = [];
+      if (this.selectedResults.length > 0) {
+        this.selectedResults.forEach(element => {
+          if (element.Time !== "") {
+            series.push({
+              name: `${element.Name}`,
+              data: [
+                [
+                  TimeConversion.timeToSeconds(element.Time),
+                  element.PlacePoints
+                ]
+              ]
+            });
+          }
+        });
+      }
+      return series;
+    },
+
     //computes number of diferent courses (short/long)
     courses() {
       return [...new Set(this.results.map(result => result.Course))].sort();
