@@ -29,7 +29,7 @@ export default {
         if (typeof b.PlacePoints === "string") {
           return -1;
         } else {
-          a.PlacePoints > b.PlacePoints ? 1 : -1;
+          a.PlacePoints < b.PlacePoints ? 1 : -1;
         }
       });
     },

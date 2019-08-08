@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>{{ $route.params.event}}</h1>
-    <div id="scatter"></div>
+
     <vue-apex-charts type="scatter" :options="options2" :series="series2"></vue-apex-charts>
 
     <h2>Riders</h2>
@@ -25,7 +25,6 @@ import StatsService from "../StatsService";
 import TimeConversion from "../TimeConversion";
 import ResultsTable from "./ResultsTable";
 import Loading from "./Loading";
-import ApexCharts from "apexcharts";
 import VueApexCharts from "vue-apexcharts";
 
 export default {
@@ -73,7 +72,6 @@ export default {
           this.selectedResults.push(result);
         }
       });
-      this.createChart();
     },
     filterList: function() {
       this.filteredResults = [];
@@ -85,80 +83,6 @@ export default {
           this.filteredResults.push(result);
         }
       });
-    },
-
-    createChart: function() {
-      function createChartSeries(data) {
-        var series = [];
-        if (data.length > 0) {
-          data.forEach(element => {
-            if (element.Time !== "") {
-              series.push({
-                name: `${element.Name}`,
-                data: [
-                  [
-                    TimeConversion.timeToSeconds(element.Time),
-                    element.PlacePoints
-                  ]
-                ]
-              });
-            }
-          });
-        }
-        return series;
-      }
-
-      var options = {
-        chart: {
-          background: "#fff",
-          animations: {
-            enabled: true,
-            easing: "easeinout",
-            speed: 800,
-            animateGradually: {
-              enabled: true,
-              delay: 150
-            }
-          },
-          height: 350,
-          type: "scatter",
-          zoom: {
-            enabled: true,
-            type: "xy"
-          }
-        },
-        series: createChartSeries(this.selectedResults),
-        xaxis: {
-          title: {
-            text: "Time",
-            rotate: 90
-          },
-          tickAmount: 10,
-          labels: {
-            formatter: function(value) {
-              return `${value.toFixed(3)} s`;
-            }
-          }
-        },
-        yaxis: {
-          labels: {
-            show: false,
-            formatter: function(value) {
-              return `${value.toFixed(0)}.`;
-            }
-          },
-          title: {
-            text: "Position",
-            rotate: 90
-          },
-          //! this can cause issues if chart reation is moved into a component
-          //? tickAmound is calculated from this component data
-          tickAmount: this.selectedResults.length
-        }
-      };
-      document.getElementById("scatter").innerHTML = "";
-      var chart = new ApexCharts(document.getElementById("scatter"), options);
-      chart.render();
     }
   },
   computed: {
