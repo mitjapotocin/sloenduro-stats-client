@@ -21,18 +21,6 @@ export default {
   },
   created() {},
   methods: {
-    sort: function() {
-      this.results.sort((a, b) => {
-        if (typeof a.PlacePoints === "string") {
-          return 1;
-        }
-        if (typeof b.PlacePoints === "string") {
-          return -1;
-        } else {
-          a.PlacePoints < b.PlacePoints ? 1 : -1;
-        }
-      });
-    },
     toggleSelected: function(result) {
       result.selected = !result.selected;
       this.$parent.updateSelectedList();
@@ -47,7 +35,7 @@ export default {
         if (typeof b.PlacePoints === "string") {
           return -1;
         } else {
-          a.PlacePoints > b.PlacePoints ? 1 : -1;
+          return a.PlacePoints > b.PlacePoints ? 1 : -1;
         }
       });
     }
