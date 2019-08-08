@@ -35,7 +35,7 @@ export default {
     },
     toggleSelected: function(result) {
       result.selected = !result.selected;
-      //   this.sort();
+      this.$parent.updateSelectedList();
     }
   },
   computed: {

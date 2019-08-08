@@ -38,6 +38,7 @@ export default {
       loading: true,
       event: this.$route.params.event,
       results: [],
+      //! handle when results are selected
       selectedResults: [],
       filteredResults: [],
       selectedCourse: "",
@@ -61,9 +62,20 @@ export default {
     this.loading = false;
     this.selectedCourse = this.courses[0];
     this.filterList();
+    this.updateSelectedList();
   },
 
   methods: {
+    updateSelectedList: function() {
+      console.log("inseide updateselectedlist");
+      this.selectedResults = [];
+      this.filteredResults.forEach(result => {
+        if (result.selected == true) {
+          this.selectedResults.push(result);
+        }
+      });
+      this.createChart();
+    },
     filterList: function() {
       this.filteredResults = [];
       this.results.forEach(result => {
