@@ -54,7 +54,8 @@ export default {
     }
 
     this.results.forEach(result => {
-      result.display = true;
+      this.$set(result, "selected", false);
+
       result.selected = false;
     });
     this.loading = false;
@@ -66,7 +67,7 @@ export default {
     filterList: function() {
       this.filteredResults = [];
       this.results.forEach(result => {
-        if (result.display == true && result.Course == this.selectedCourse) {
+        if (result.Course == this.selectedCourse) {
           if (result.PlacePoints == 1) {
             result.selected = true;
           }
@@ -124,11 +125,12 @@ export default {
     }
   },
   computed: {
+    //computes number of diferent courses (short/long)
     courses() {
       return [...new Set(this.results.map(result => result.Course))].sort();
     },
 
-    //TODO da se izracinat iz stevila keyev
+    // computes number of stages
     noOfStages() {
       let count = 0;
       Object.keys(this.results[0]).forEach(key => {
@@ -136,14 +138,14 @@ export default {
       });
       return count;
     }
+  },
+  watch: {
+    selectedCourse: {
+      handler: function() {
+        this.filterList();
+      }
+    }
   }
-  // watch: {
-  //   selectedCourse: {
-  //     handler: function() {
-  //       this.filterList();
-  //     }
-  //   }
-  // }
 };
 </script>
 
