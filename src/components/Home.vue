@@ -36,9 +36,8 @@ export default {
     } catch (err) {
       this.error = err.message;
     }
-
-    //transformes time to seconds work /w HH:mm:ss:fff
   },
   methods: {}
 };
 </script>
+

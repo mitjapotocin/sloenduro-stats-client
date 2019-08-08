@@ -2,7 +2,7 @@ import Vue from "vue";
 import App from "./App.vue";
 import VueRouter from "vue-router";
 import Home from "./components/Home.vue";
-import Event from "./components/Event.vue";
+const Event = () => import("./components/Event.vue");
 
 Vue.config.productionTip = false;
 Vue.use(VueRouter);
