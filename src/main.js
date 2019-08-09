@@ -3,13 +3,15 @@ import App from "./App.vue";
 import VueRouter from "vue-router";
 import Home from "./components/Home.vue";
 const Event = () => import("./components/Event.vue");
+const Rider = () => import("./components/Rider.vue");
 
 Vue.config.productionTip = false;
 Vue.use(VueRouter);
 
 const routes = [
   { path: "/", component: Home },
-  { path: "/Events/:event", name: "event", component: Event }
+  { path: "/Events/:event", name: "event", component: Event },
+  { path: "/Riders/:name", name: "rider", component: Rider }
 ];
 
 const router = new VueRouter({

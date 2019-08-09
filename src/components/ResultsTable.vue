@@ -7,7 +7,11 @@
       :class="{'selected': result.selected}"
       @click="toggleSelected(result)"
     >
-      <a>{{result.PlacePoints}} {{result.Name}} {{result.Team}} {{result.Time}} Display: {{result.display}} Selected: {{result.selected}}{{result.Course}}</a>
+      <a>
+        {{result.PlacePoints}}
+        <router-link :to="{ name: 'rider', params: { name: result.Name }}">{{result.Name}}</router-link>
+        {{result.Team}} {{result.Time}} Display: {{result.display}} Selected: {{result.selected}}{{result.Course}}
+      </a>
     </div>
   </div>
 </template>
