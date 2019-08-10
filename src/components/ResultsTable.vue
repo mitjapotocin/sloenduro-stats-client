@@ -19,12 +19,17 @@
       </el-table-column>
       <el-table-column property="Nation" label="Nat." width="50"></el-table-column>
       <el-table-column property="Team" label="Team" width="250"></el-table-column>
-      <el-table-column property="Category" label="Category" width="125"></el-table-column>
-      <el-table-column property="Time" label="Time" width="120"></el-table-column>
-      <el-table-column property="selected" label="Selected" width="50">
+      <el-table-column property="Category" label="Category" width="125">
         <template slot-scope="scope">
-          <i v-if="scope.row.selected" style="color:#409EFF;" class="el-icon-check"></i>
+          <el-tag type="success">{{scope.row.Category}}</el-tag>
         </template>
+        -->
+      </el-table-column>
+      <el-table-column property="Time" label="Time" width="120"></el-table-column>
+      <el-table-column property="selected" label="Sel." width="50">
+        <template slot-scope="scope">
+          <i v-if="scope.row.selected" style="color:#409EFF; " class="el-icon-check"></i>
+        </template>-->
       </el-table-column>
       <el-table-column label width="120">
         <template slot-scope="scope">
@@ -40,16 +45,18 @@ export default {
   name: "ResultsTable",
   props: { results: Array },
   data() {
-    return {};
+    return {
+      loading: true
+    };
   },
   created() {},
   methods: {
     handleEdit: function(row) {
       console.log(row);
     },
-    toggleSelected: function(result) {
+    toggleSelected: async function(result) {
       result.selected = !result.selected;
-      this.$parent.updateSelectedList();
+      await this.$parent.updateSelectedList(result);
     }
   },
   computed: {

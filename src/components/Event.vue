@@ -2,6 +2,9 @@
   <div>
     <h1>{{ $route.params.event}}</h1>
 
+    <!-- v-if="selectedResults.length != 0" -->
+
+    <selected-tags v-bind:selected="selectedResults"></selected-tags>
     <vue-apex-charts type="scatter" :options="options2" :series="series2"></vue-apex-charts>
 
     <div>
@@ -18,12 +21,13 @@
 
     <div class="container">
       <loading v-if="loading"></loading>
-      <results-table v-bind:results="filteredResults"></results-table>
+      <results-table class="results-table" v-bind:results="filteredResults"></results-table>
     </div>
   </div>
 </template>
 
 <script>
+import SelectedTags from "./SelectedTags";
 import StatsService from "../StatsService";
 import TimeConversion from "../TimeConversion";
 import ResultsTable from "./ResultsTable";
@@ -33,6 +37,7 @@ import { Radio } from "element-ui";
 
 export default {
   components: {
+    SelectedTags,
     VueApexCharts,
     ResultsTable,
     Loading,
@@ -71,21 +76,33 @@ export default {
   },
 
   methods: {
-    updateSelectedList: function() {
+    clearSelectedList: function() {
       this.selectedResults = [];
-      this.filteredResults.forEach(result => {
-        if (result.selected == true) {
-          this.selectedResults.push(result);
-        }
-      });
+    },
+    updateSelectedList: function(result) {
+      if (result != undefined) {
+        result.selected == true
+          ? this.selectedResults.push(result)
+          : this.selectedResults.splice(
+              this.selectedResults.indexOf(result),
+              1
+            );
+      } else {
+        this.selectedResults = [];
+        this.filteredResults.forEach(result => {
+          if (result.selected == true) {
+            this.selectedResults.push(result);
+          }
+        });
+      }
     },
     filterList: function() {
       this.filteredResults = [];
       this.results.forEach(result => {
         if (result.Course == this.selectedCourse) {
-          if (result.PlacePoints == 1) {
-            result.selected = true;
-          }
+          // if (result.PlacePoints == 1) {
+          //   result.selected = true;
+          // }
           this.filteredResults.push(result);
         }
       });
@@ -139,6 +156,12 @@ export default {
           //! this can cause issues if chart reation is moved into a component
           //? tickAmound is calculated from this component data
           tickAmount: this.selectedResults.length
+        },
+        legend: {
+          showForSingleSeries: true,
+          onItemClick: {
+            toggleDataSeries: false
+          }
         }
       };
     },
@@ -223,7 +246,9 @@ li {
 .post:hover {
   background: #77c9ff;
 }
-
+.results-table {
+  display: inline-block;
+}
 button {
   font-weight: 400;
   font-size: 16px;
@@ -236,7 +261,7 @@ button:focus {
   outline: none;
 }
 .container {
-  text-align: left;
+  text-align: center;
 }
 .canvas-container {
   padding-left: 40px;
