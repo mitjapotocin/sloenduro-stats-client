@@ -1,18 +1,37 @@
 <template>
   <div>
-    <div
-      v-for="(result) in resultsSorted"
-      v-bind:key="result._id"
-      class="result"
-      :class="{'selected': result.selected}"
-      @click="toggleSelected(result)"
+    <el-table
+      ref="multipleTable"
+      :data="resultsSorted"
+      style="width: 100%"
+      @selection-change="handleSelectionChange"
     >
-      <a>
-        {{result.PlacePoints}}
-        <router-link :to="{ name: 'rider', params: { name: result.Name }}">{{result.Name}}</router-link>
-        {{result.Team}} {{result.Time}} Display: {{result.display}} Selected: {{result.selected}}{{result.Course}}
-      </a>
-    </div>
+      <!-- <router-link :to="{ name: 'rider', params: {name:"Mitja"}}"> -->
+      <!-- </router-link> -->
+
+      <el-table-column property="PlacePoints" label="Pos." width="50"></el-table-column>
+      <el-table-column property="Name" label="Name" width="250">
+        <template slot-scope="scope">
+          <router-link :to="{ name: 'rider', params: {name: scope.row.Name }}">
+            <span style="color:#409EFF;">{{scope.row.Name}}</span>
+          </router-link>
+        </template>
+      </el-table-column>
+      <el-table-column property="Nation" label="Nat." width="50"></el-table-column>
+      <el-table-column property="Team" label="Team" width="250"></el-table-column>
+      <el-table-column property="Category" label="Category" width="125"></el-table-column>
+      <el-table-column property="Time" label="Time" width="120"></el-table-column>
+      <el-table-column property="selected" label="Selected" width="50">
+        <template slot-scope="scope">
+          <i v-if="scope.row.selected" style="color:#409EFF;" class="el-icon-check"></i>
+        </template>
+      </el-table-column>
+      <el-table-column label width="120">
+        <template slot-scope="scope">
+          <el-button size="mini" @click="toggleSelected(scope.row)">Add/Remove</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
   </div>
 </template>
 
@@ -25,6 +44,9 @@ export default {
   },
   created() {},
   methods: {
+    handleEdit: function(row) {
+      console.log(row);
+    },
     toggleSelected: function(result) {
       result.selected = !result.selected;
       this.$parent.updateSelectedList();

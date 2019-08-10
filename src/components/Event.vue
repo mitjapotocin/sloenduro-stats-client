@@ -4,13 +4,16 @@
 
     <vue-apex-charts type="scatter" :options="options2" :series="series2"></vue-apex-charts>
 
-    <h2>Riders</h2>
-
-    <h2>{{selectedCourse}}</h2>
-
-    <div v-for="(course, index) in courses" :key="index">
-      <input v-model="selectedCourse" v-bind:value="course" type="radio" name="course" />
-      <label>{{course}}</label>
+    <div>
+      <el-radio-group v-model="selectedCourse" size="medium">
+        <el-radio-button
+          v-for="(course, index) in courses"
+          :key="index"
+          v-bind:value="course"
+          v-bind:label="course"
+          border
+        >{{course}}</el-radio-button>
+      </el-radio-group>
     </div>
 
     <div class="container">
@@ -26,16 +29,19 @@ import TimeConversion from "../TimeConversion";
 import ResultsTable from "./ResultsTable";
 import Loading from "./Loading";
 import VueApexCharts from "vue-apexcharts";
+import { Radio } from "element-ui";
 
 export default {
   components: {
     VueApexCharts,
     ResultsTable,
-    Loading
+    Loading,
+    Radio
   },
   name: "Event",
   data() {
     return {
+      radio1: "1",
       loading: true,
       event: this.$route.params.event,
       results: [],
