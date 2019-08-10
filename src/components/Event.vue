@@ -2,10 +2,14 @@
   <div>
     <h1>{{ $route.params.event}}</h1>
 
-    <!-- v-if="selectedResults.length != 0" -->
-
+    <el-switch v-model="displayChart" active-text="Display chart"></el-switch>
     <selected-tags v-bind:selected="selectedResults"></selected-tags>
-    <vue-apex-charts type="scatter" :options="options2" :series="series2"></vue-apex-charts>
+    <div v-if="displayChart">
+      <vue-apex-charts height="350px" type="scatter" :options="options2" :series="series2"></vue-apex-charts>
+    </div>
+
+    <!-- <selected-tags v-bind:selected="selectedResults"></selected-tags>
+    <vue-apex-charts type="scatter" :options="options2" :series="series2"></vue-apex-charts>-->
 
     <div>
       <el-radio-group v-model="selectedCourse" size="medium">
@@ -46,6 +50,7 @@ export default {
   name: "Event",
   data() {
     return {
+      displayChart: false,
       radio1: "1",
       loading: true,
       event: this.$route.params.event,
