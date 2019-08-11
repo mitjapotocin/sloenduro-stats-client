@@ -1,14 +1,6 @@
 <template>
   <div>
-    <el-table
-      ref="multipleTable"
-      :data="resultsSorted"
-      style="width: 100%"
-      @selection-change="handleSelectionChange"
-    >
-      <!-- <router-link :to="{ name: 'rider', params: {name:"Mitja"}}"> -->
-      <!-- </router-link> -->
-
+    <el-table ref="multipleTable" :data="resultsSorted" style="width: 100%">
       <el-table-column property="PlacePoints" label="Pos." width="50"></el-table-column>
       <el-table-column property="Name" label="Name" width="250">
         <template slot-scope="scope">
@@ -51,9 +43,6 @@ export default {
   },
   created() {},
   methods: {
-    handleEdit: function(row) {
-      console.log(row);
-    },
     toggleSelected: async function(result) {
       result.selected = !result.selected;
       await this.$parent.updateSelectedList(result);
