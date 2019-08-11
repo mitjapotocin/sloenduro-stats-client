@@ -1,5 +1,16 @@
 <template>
-  <h1>Sloenduro-stats</h1>
+  <div>
+    <h2>
+      Sloenduro Results
+      <router-link :to="{ name: 'home', params: {}}">
+        <a>Home</a>
+      </router-link>
+      <span>&nbsp</span>
+      <router-link :to="{ name: 'standings', params: {}}">
+        <a>Standings</a>
+      </router-link>
+    </h2>
+  </div>
 </template>
 
 <script>
