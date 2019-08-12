@@ -1,19 +1,34 @@
 <template>
-  <div>Standings</div>
+  <div>standings</div>
 </template>
 
 <script>
+import StatsService from "../StatsService";
+
 export default {
   data() {
-    return {};
+    return {
+      results: [],
+      events: []
+    };
   },
-  created() {},
+  async created() {
+    try {
+      this.results = await StatsService.getPosts("/api/results/");
+    } catch (err) {
+      this.error = err.message;
+    }
+    try {
+      this.events = await StatsService.getPosts("/api/events/");
+    } catch (err) {
+      this.error = err.message;
+    }
+  },
   methods: {
     calculatePoints(position) {
       if (typeof position == "string") {
         return 0;
       }
-
       if (position > 79) {
         return 1;
       }
@@ -42,7 +57,8 @@ export default {
         return 400;
       }
     }
-  }
+  },
+  computed: {}
 };
 </script>
 

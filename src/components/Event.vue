@@ -55,7 +55,6 @@ export default {
       loading: true,
       event: this.$route.params.event,
       results: [],
-      //! handle when results are selected
       selectedResults: [],
       filteredResults: [],
       selectedCourse: "",
