@@ -25,6 +25,15 @@ export default {
     }
   },
   methods: {
+    filterSloEnduro() {
+      let sloenduroEvents = [];
+      this.event.forEach(element => {
+        if (element.series == SloEnduro) {
+          sloenduroEvents.a;
+        }
+      });
+    },
+
     calculatePoints(position) {
       if (typeof position == "string") {
         return 0;

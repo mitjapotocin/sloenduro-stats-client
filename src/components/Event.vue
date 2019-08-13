@@ -1,29 +1,32 @@
 <template>
   <div>
-    <h1>{{ $route.params.event}}</h1>
-
-    <el-switch v-model="displayChart" active-text="Display chart"></el-switch>
-    <selected-tags v-bind:selected="selectedResults"></selected-tags>
-    <div v-if="displayChart">
-      <vue-apex-charts height="350px" type="scatter" :options="options2" :series="series2"></vue-apex-charts>
+    <div class="top-container">
+      <h1>{{ $route.params.event}}</h1>
+      <!-- <el-switch v-model="displayChart" active-text="Display chart"></el-switch> -->
+      //todo if none selected write "seect some results... ..."
+      <selected-tags v-bind:selected="selectedResults"></selected-tags>
+      <el-collapse v-model="activeNames" @change="handleChange">
+        <el-collapse-item title="Display/Hide Chart" name="1">
+          <div v-if="displayChart">
+            <vue-apex-charts height="350px" type="scatter" :options="options2" :series="series2"></vue-apex-charts>
+          </div>
+        </el-collapse-item>
+      </el-collapse>
     </div>
 
-    <!-- <selected-tags v-bind:selected="selectedResults"></selected-tags>
-    <vue-apex-charts type="scatter" :options="options2" :series="series2"></vue-apex-charts>-->
+    <div class="bottom-container">
+      <dir class="filter-container">
+        <el-radio-group v-model="selectedCourse" size="medium">
+          <el-radio-button
+            v-for="(course, index) in courses"
+            :key="index"
+            v-bind:value="course"
+            v-bind:label="course"
+            border
+          >{{course}}</el-radio-button>
+        </el-radio-group>
+      </dir>
 
-    <div>
-      <el-radio-group v-model="selectedCourse" size="medium">
-        <el-radio-button
-          v-for="(course, index) in courses"
-          :key="index"
-          v-bind:value="course"
-          v-bind:label="course"
-          border
-        >{{course}}</el-radio-button>
-      </el-radio-group>
-    </div>
-
-    <div class="container">
       <loading v-if="loading"></loading>
       <results-table class="results-table" v-bind:results="filteredResults"></results-table>
     </div>
@@ -50,7 +53,7 @@ export default {
   name: "Event",
   data() {
     return {
-      displayChart: false,
+      displayChart: true,
       radio1: "1",
       loading: true,
       event: this.$route.params.event,
@@ -230,6 +233,10 @@ li {
   margin: 0 10px;
 }
 
+.filter-container {
+  padding: 20px;
+  margin: 0px;
+}
 .loadingcontainer {
   display: inline;
   position: absolute;
@@ -241,14 +248,17 @@ li {
 .spinner {
   display: inline-block;
 }
-
-.post {
-  background: #a2d9fdc0;
-  margin: 3px;
-  text-align: left;
+.top-container {
+  padding: 20px;
 }
-.post:hover {
-  background: #77c9ff;
+.smooth-enter-active,
+.smooth-leave-active {
+  transition: height 2s;
+  overflow: hidden;
+}
+.smooth-enter,
+.smooth-leave-to {
+  height: 0;
 }
 .results-table {
   display: inline-block;
@@ -264,7 +274,8 @@ textarea:focus,
 button:focus {
   outline: none;
 }
-.container {
+.bottom-container {
+  background-color: rgb(230, 238, 247);
   text-align: center;
 }
 .canvas-container {
