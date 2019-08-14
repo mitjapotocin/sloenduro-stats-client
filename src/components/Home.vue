@@ -1,17 +1,19 @@
 <template>
   <div>
     <div
-      class="post"
+      class="container"
       v-for="(event) in events"
       v-bind:item="event"
       v-bind:index="text"
       v-bind:key="event._id"
     >
-      <a>
-        <router-link
-          :to="{ name: 'event', params: { event: event.event }}"
-        >{{event.date}} {{event.eventName}} {{event.year}}</router-link>
-      </a>
+      <router-link :to="{ name: 'event', params: { event: event.event }}">
+        <el-card class="box-card" shadow="hover">
+          <p>{{event.eventName}}</p>
+          <p>{{event.date}}</p>
+          <p>{{event.year}}</p>
+        </el-card>
+      </router-link>
     </div>
   </div>
 </template>
@@ -41,3 +43,14 @@ export default {
 };
 </script>
 
+<style scoped>
+.container {
+  margin: 20px;
+  text-align: center;
+}
+
+.box-card {
+  width: 360px;
+  display: inline-block;
+}
+</style>

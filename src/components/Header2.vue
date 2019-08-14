@@ -2,8 +2,8 @@
   <div class="header">
     <div class="container">
       <tr>
-        <th>
-          <a class="logo">Sloenduro Results</a>
+        <th class="logo">
+          <a>Sloenduro Results</a>
         </th>
 
         <th>
@@ -11,6 +11,7 @@
             <a>Home</a>
           </router-link>
         </th>
+
         <th>
           <router-link :to="{ name: 'standings', params: {}}">
             <a>Standings</a>
@@ -18,7 +19,6 @@
         </th>
       </tr>
     </div>
-    <!-- <span>&nbsp</span> -->
   </div>
 </template>
 
@@ -34,15 +34,16 @@ export default {
 
 <style scoped>
 .header {
-  background-color: black;
+  background-color: rgba(64, 160, 255, 0.479);
   color: white;
 }
-.container {
-  margin: 20px;
+th {
+  padding: 20px 20px 20px 40px;
 }
-tr {
-}
+
 .logo {
+  padding: 20px;
+  background-color: #409eff;
   margin: 20px 80px 20px 20px;
 }
 a {

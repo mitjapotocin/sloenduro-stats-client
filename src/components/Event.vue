@@ -1,10 +1,13 @@
 <template>
   <div>
     <div class="top-container">
+      <!-- TODO: change event name -->
       <h1>{{ $route.params.event}}</h1>
-      <!-- <el-switch v-model="displayChart" active-text="Display chart"></el-switch> -->
-      //todo if none selected write "seect some results... ..."
-      <selected-tags v-bind:selected="selectedResults"></selected-tags>
+      <!-- TODO: make a nice transition  -->
+      <div class="selected-results-container">
+        <p v-if="selectedResults.length == 0 ">Select riders from results table.</p>
+        <selected-tags v-else v-bind:selected="selectedResults"></selected-tags>
+      </div>
       <el-collapse v-model="activeNames" @change="handleChange">
         <el-collapse-item title="Display/Hide Chart" name="1">
           <div v-if="displayChart">
@@ -231,6 +234,10 @@ ul {
 li {
   display: inline-block;
   margin: 0 10px;
+}
+
+.selected-results-container {
+  padding: 20px;
 }
 
 .filter-container {
