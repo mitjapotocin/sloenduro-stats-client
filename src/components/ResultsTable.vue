@@ -1,7 +1,8 @@
 <template>
   <div>
     <el-table ref="multipleTable" :data="results" style="width: 100%">
-      <el-table-column property="PlacePoints" label="Pos." width="50"></el-table-column>
+      <el-table-column v-if="isTotalCategory" property="PlacePoints" label="Pos." width="50"></el-table-column>
+      <el-table-column v-if="!isTotalCategory" property="CategoryPosition" label="Pos." width="50"></el-table-column>
       <el-table-column property="Name" label="Name" width="250">
         <template slot-scope="scope">
           <router-link :to="{ name: 'rider', params: {name: scope.row.Name }}">
@@ -11,11 +12,10 @@
       </el-table-column>
       <el-table-column property="Nation" label="Nat." width="52"></el-table-column>
       <el-table-column property="Team" label="Team" width="250"></el-table-column>
-      <el-table-column property="Category" label="Category" width="125">
+      <el-table-column property="Category" label="Category" width="135">
         <template slot-scope="scope">
-          <el-tag type="success">{{scope.row.Category}}</el-tag>
+          <el-tag type="success">{{scope.row.Category.split("(", 1)[0]}}</el-tag>
         </template>
-        -->
       </el-table-column>
       <el-table-column property="Time" label="Time" width="120"></el-table-column>
       <el-table-column property="selected" label="Sel." width="50">
@@ -35,7 +35,7 @@
 <script>
 export default {
   name: "ResultsTable",
-  props: { results: Array },
+  props: { results: Array, isTotalCategory: Boolean },
   data() {
     return {
       loading: true

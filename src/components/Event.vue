@@ -6,7 +6,10 @@
 
       <!-- TODO: make a nice transition  -->
       <div class="selected-results-container">
-        <p v-if="selectedResults.length == 0 ">Select riders from results table.</p>
+        <p
+          style="padding: 5.091px; margin: 0px"
+          v-if="selectedResults.length == 0 "
+        >Select riders from results table.</p>
         <selected-tags v-else v-bind:selected="selectedResults"></selected-tags>
       </div>
       <el-collapse @change="handleChange">
@@ -19,31 +22,42 @@
     </div>
 
     <div class="bottom-container">
-      <dir class="filter-container">
-        <el-radio-group v-model="selectedCourse" size="small">
-          <el-radio-button
-            v-for="(course, index) in courses"
-            :key="index"
-            v-bind:value="course"
-            v-bind:label="course"
-            border
-          >{{course}}</el-radio-button>
-        </el-radio-group>
-        <el-radio-group v-model="selectedCategory" size="small">
-          <el-radio-button v-if="loading == false" value="All" label="All">All</el-radio-button>
-          <el-radio-button
-            v-for="(category, index) in Object.keys(this.resultsByCategory).sort()"
-            :key="index"
-            v-bind:value="category"
-            v-bind:label="category"
-            border
-          >{{category}}</el-radio-button>
-        </el-radio-group>
-      </dir>
+      <div v-if="!loading" class="table">
+        <div>
+          <div class="filter-container">
+            <div>
+              <el-radio-group v-model="selectedCourse" size="small">
+                <el-radio-button
+                  v-for="(course, index) in Object.keys(resultsByCategory).sort()"
+                  :key="index"
+                  v-bind:value="course"
+                  v-bind:label="course"
+                  border
+                >{{course}}</el-radio-button>
+              </el-radio-group>
+            </div>
+            <div>
+              <el-radio-group v-model="selectedCategory" size="small">
+                <el-radio-button
+                  v-for="(category, index) in Object.keys(this.resultsByCategory[selectedCourse]).sort()"
+                  :key="index"
+                  v-bind:value="category"
+                  v-bind:label="category"
+                  border
+                >{{category}}</el-radio-button>
+              </el-radio-group>
+            </div>
+          </div>
+        </div>
 
-      <loading v-if="loading"></loading>
-      <results-table class="results-table" v-bind:results="filteredResults"></results-table>
+        <results-table
+          class="results-table"
+          v-bind:results="resultsByCategory[selectedCourse][selectedCategory]"
+          v-bind:isTotalCategory="selectedCategory == 'Total'"
+        ></results-table>
+      </div>
     </div>
+    <loading v-if="loading"></loading>
   </div>
 </template>
 
@@ -72,9 +86,9 @@ export default {
       results: [],
       resultsByCategory: {},
       selectedResults: [],
-      filteredResults: [],
+
       selectedCourse: "",
-      selectedCategory: "",
+      selectedCategory: "Total",
       error: "",
       text: "",
       resultsApi: `/api/results/${this.$route.params.event}`
@@ -86,18 +100,25 @@ export default {
     } catch (err) {
       this.error = err.message;
     }
-    this.selectedCourse = this.courses[0];
     this.sortResults();
     this.results.forEach(result => {
       this.$set(result, "selected", false);
-      if (this.resultsByCategory[result.Category] == undefined) {
-        this.resultsByCategory[result.Category] = [result];
+      if (this.resultsByCategory[result.Course] == undefined) {
+        this.resultsByCategory[result.Course] = { Total: [] };
+      }
+      if (this.resultsByCategory[result.Course][result.Category] == undefined) {
+        result.CategoryPosition = 1;
+        this.resultsByCategory[result.Course][result.Category] = [result];
+        this.resultsByCategory[result.Course]["Total"].push(result);
       } else {
-        this.resultsByCategory[result.Category].push(result);
+        result.CategoryPosition =
+          this.resultsByCategory[result.Course][result.Category].length + 1;
+        this.resultsByCategory[result.Course][result.Category].push(result);
+        this.resultsByCategory[result.Course]["Total"].push(result);
       }
     });
-    this.filterList();
-    this.updateSelectedList();
+
+    this.selectedCourse = Object.keys(this.resultsByCategory).sort()[0];
     this.loading = false;
   },
 
@@ -117,36 +138,11 @@ export default {
     handleChange: function() {
       this.displayChart = !this.displayChart;
     },
-    clearSelectedList: function() {
-      this.selectedResults = [];
-    },
+
     updateSelectedList: function(result) {
-      if (result != undefined) {
-        result.selected == true
-          ? this.selectedResults.push(result)
-          : this.selectedResults.splice(
-              this.selectedResults.indexOf(result),
-              1
-            );
-      } else {
-        this.selectedResults = [];
-        this.filteredResults.forEach(result => {
-          if (result.selected == true) {
-            this.selectedResults.push(result);
-          }
-        });
-      }
-    },
-    filterList: function() {
-      this.filteredResults = [];
-      this.results.forEach(result => {
-        if (result.Course == this.selectedCourse) {
-          // if (result.PlacePoints == 1) {
-          //   result.selected = true;
-          // }
-          this.filteredResults.push(result);
-        }
-      });
+      result.selected == true
+        ? this.selectedResults.push(result)
+        : this.selectedResults.splice(this.selectedResults.indexOf(result), 1);
     }
   },
   computed: {
@@ -225,16 +221,6 @@ export default {
       }
       return series;
     },
-    categories() {
-      return Object.keys(this.resultsByCategory);
-    },
-
-    //computes number of diferent courses (short/long)
-    courses() {
-      return [...new Set(this.results.map(result => result.Course))].sort();
-    },
-
-    // computes number of stages
     noOfStages() {
       let count = 0;
       Object.keys(this.results[0]).forEach(key => {
@@ -243,13 +229,6 @@ export default {
       return count;
     }
   }
-  // watch: {
-  //   selectedCourse: {
-  //     handler: function() {
-  //       this.filterList();
-  //     }
-  //   }
-  // }
 };
 </script>
 
@@ -275,7 +254,7 @@ li {
 }
 
 .filter-container {
-  padding: 20px;
+  padding: 10px;
   margin: 0px;
 }
 .loadingcontainer {
@@ -318,8 +297,8 @@ button:focus {
 .bottom-container {
   background-color: rgb(230, 238, 247);
   text-align: center;
-  display: inline-block;
 }
+
 .canvas-container {
   padding-left: 40px;
   padding-right: 40px;
@@ -327,6 +306,14 @@ button:focus {
 
 .selected {
   background-color: rgba(135, 207, 235, 0.281);
+}
+
+.el-radio-group {
+  margin: 3px;
+}
+.table {
+  display: inline-block;
+  background-color: rgb(230, 238, 247);
 }
 </style>
 

@@ -1,5 +1,5 @@
 <template>
-  <div>standings</div>
+  <div>Working on it.</div>
 </template>
 
 <script>
@@ -29,15 +29,6 @@ export default {
     });
   },
   methods: {
-    filterSloEnduro() {
-      let sloenduroEvents = [];
-      this.event.forEach(element => {
-        if (element.series == SloEnduro) {
-          sloenduroEvents.push;
-        }
-      });
-    },
-
     calculatePoints(position) {
       if (typeof position == "string") {
         return 0;
