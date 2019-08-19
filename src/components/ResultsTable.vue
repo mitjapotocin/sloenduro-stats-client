@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-table ref="multipleTable" :data="resultsSorted" style="width: 100%">
+    <el-table ref="multipleTable" :data="results" style="width: 100%">
       <el-table-column property="PlacePoints" label="Pos." width="50"></el-table-column>
       <el-table-column property="Name" label="Name" width="250">
         <template slot-scope="scope">
@@ -9,7 +9,7 @@
           </router-link>
         </template>
       </el-table-column>
-      <el-table-column property="Nation" label="Nat." width="50"></el-table-column>
+      <el-table-column property="Nation" label="Nat." width="52"></el-table-column>
       <el-table-column property="Team" label="Team" width="250"></el-table-column>
       <el-table-column property="Category" label="Category" width="125">
         <template slot-scope="scope">

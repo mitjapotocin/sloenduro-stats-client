@@ -3,12 +3,13 @@
     <div class="top-container">
       <!-- TODO: change event name -->
       <h1>{{ $route.params.event}}</h1>
+      <p>{{resultsByCategory}}</p>
       <!-- TODO: make a nice transition  -->
       <div class="selected-results-container">
         <p v-if="selectedResults.length == 0 ">Select riders from results table.</p>
         <selected-tags v-else v-bind:selected="selectedResults"></selected-tags>
       </div>
-      <el-collapse v-model="activeNames" @change="handleChange">
+      <el-collapse @change="handleChange">
         <el-collapse-item title="Display/Hide Chart" name="1">
           <div v-if="displayChart">
             <vue-apex-charts height="350px" type="scatter" :options="options2" :series="series2"></vue-apex-charts>
@@ -43,24 +44,23 @@ import TimeConversion from "../TimeConversion";
 import ResultsTable from "./ResultsTable";
 import Loading from "./Loading";
 import VueApexCharts from "vue-apexcharts";
-import { Radio } from "element-ui";
 
 export default {
   components: {
     SelectedTags,
     VueApexCharts,
     ResultsTable,
-    Loading,
-    Radio
+    Loading
   },
   name: "Event",
   data() {
     return {
-      displayChart: true,
+      displayChart: false,
       radio1: "1",
       loading: true,
       event: this.$route.params.event,
       results: [],
+      resultsByCategory: {},
       selectedResults: [],
       filteredResults: [],
       selectedCourse: "",
@@ -75,17 +75,34 @@ export default {
     } catch (err) {
       this.error = err.message;
     }
-
+    this.selectedCourse = this.courses[0];
+    this.sortResults();
     this.results.forEach(result => {
       this.$set(result, "selected", false);
+      // TODO: finish this
+      this.resultsByCategory[result.Category] = result.Name;
     });
-    this.selectedCourse = this.courses[0];
     this.filterList();
     this.updateSelectedList();
     this.loading = false;
   },
 
   methods: {
+    sortResults() {
+      this.results.sort((a, b) => {
+        if (typeof a.PlacePoints === "string") {
+          return 1;
+        }
+        if (typeof b.PlacePoints === "string") {
+          return -1;
+        } else {
+          return a.PlacePoints > b.PlacePoints ? 1 : -1;
+        }
+      });
+    },
+    handleChange: function() {
+      this.displayChart = !this.displayChart;
+    },
     clearSelectedList: function() {
       this.selectedResults = [];
     },
@@ -284,6 +301,7 @@ button:focus {
 .bottom-container {
   background-color: rgb(230, 238, 247);
   text-align: center;
+  display: inline-block;
 }
 .canvas-container {
   padding-left: 40px;

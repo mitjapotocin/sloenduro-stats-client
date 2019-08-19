@@ -8,28 +8,32 @@ import StatsService from "../StatsService";
 export default {
   data() {
     return {
-      results: [],
+      results: {},
       events: []
     };
   },
   async created() {
     try {
-      this.results = await StatsService.getPosts("/api/results/");
+      this.events = await StatsService.getPosts("/api/events/series/sloenduro");
     } catch (err) {
       this.error = err.message;
     }
-    try {
-      this.events = await StatsService.getPosts("/api/events/");
-    } catch (err) {
-      this.error = err.message;
-    }
+    this.events.forEach(async event => {
+      try {
+        this.results[event.event] = await StatsService.getPosts(
+          `/api/results/${event.event}`
+        );
+      } catch (err) {
+        this.error = err.message;
+      }
+    });
   },
   methods: {
     filterSloEnduro() {
       let sloenduroEvents = [];
       this.event.forEach(element => {
         if (element.series == SloEnduro) {
-          sloenduroEvents.a;
+          sloenduroEvents.push;
         }
       });
     },
