@@ -3,7 +3,7 @@
     <div class="top-container">
       <!-- TODO: change event name -->
       <h1>{{ $route.params.event}}</h1>
-      <p>{{resultsByCategory}}</p>
+
       <!-- TODO: make a nice transition  -->
       <div class="selected-results-container">
         <p v-if="selectedResults.length == 0 ">Select riders from results table.</p>
@@ -20,7 +20,7 @@
 
     <div class="bottom-container">
       <dir class="filter-container">
-        <el-radio-group v-model="selectedCourse" size="medium">
+        <el-radio-group v-model="selectedCourse" size="small">
           <el-radio-button
             v-for="(course, index) in courses"
             :key="index"
@@ -28,6 +28,16 @@
             v-bind:label="course"
             border
           >{{course}}</el-radio-button>
+        </el-radio-group>
+        <el-radio-group v-model="selectedCategory" size="small">
+          <el-radio-button v-if="loading == false" value="All" label="All">All</el-radio-button>
+          <el-radio-button
+            v-for="(category, index) in Object.keys(this.resultsByCategory).sort()"
+            :key="index"
+            v-bind:value="category"
+            v-bind:label="category"
+            border
+          >{{category}}</el-radio-button>
         </el-radio-group>
       </dir>
 
@@ -64,6 +74,7 @@ export default {
       selectedResults: [],
       filteredResults: [],
       selectedCourse: "",
+      selectedCategory: "",
       error: "",
       text: "",
       resultsApi: `/api/results/${this.$route.params.event}`
@@ -79,8 +90,11 @@ export default {
     this.sortResults();
     this.results.forEach(result => {
       this.$set(result, "selected", false);
-      // TODO: finish this
-      this.resultsByCategory[result.Category] = result.Name;
+      if (this.resultsByCategory[result.Category] == undefined) {
+        this.resultsByCategory[result.Category] = [result];
+      } else {
+        this.resultsByCategory[result.Category].push(result);
+      }
     });
     this.filterList();
     this.updateSelectedList();
@@ -211,6 +225,9 @@ export default {
       }
       return series;
     },
+    categories() {
+      return Object.keys(this.resultsByCategory);
+    },
 
     //computes number of diferent courses (short/long)
     courses() {
@@ -225,14 +242,14 @@ export default {
       });
       return count;
     }
-  },
-  watch: {
-    selectedCourse: {
-      handler: function() {
-        this.filterList();
-      }
-    }
   }
+  // watch: {
+  //   selectedCourse: {
+  //     handler: function() {
+  //       this.filterList();
+  //     }
+  //   }
+  // }
 };
 </script>
 

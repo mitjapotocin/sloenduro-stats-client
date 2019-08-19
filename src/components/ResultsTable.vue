@@ -49,18 +49,18 @@ export default {
     }
   },
   computed: {
-    resultsSorted() {
-      return this.results.sort((a, b) => {
-        if (typeof a.PlacePoints === "string") {
-          return 1;
-        }
-        if (typeof b.PlacePoints === "string") {
-          return -1;
-        } else {
-          return a.PlacePoints > b.PlacePoints ? 1 : -1;
-        }
-      });
-    }
+    // resultsSorted() {
+    //   return this.results.sort((a, b) => {
+    //     if (typeof a.PlacePoints === "string") {
+    //       return 1;
+    //     }
+    //     if (typeof b.PlacePoints === "string") {
+    //       return -1;
+    //     } else {
+    //       return a.PlacePoints > b.PlacePoints ? 1 : -1;
+    //     }
+    //   });
+    // }
   }
 };
 </script>
