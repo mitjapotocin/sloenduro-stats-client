@@ -12,8 +12,21 @@
         >Select riders from results table.</p>
         <selected-tags v-else v-bind:selected="selectedResults"></selected-tags>
       </div>
+      <el-collapse @change="handleChangeStages">
+        <el-collapse-item title="Position by stages" name="1">
+          <!-- v-if display Chart -->
+          <div v-if="displayChartStages">
+            <vue-apex-charts
+              type="line"
+              height="450px"
+              :options="optionsStages"
+              :series="seriesStages"
+            ></vue-apex-charts>
+          </div>
+        </el-collapse-item>
+      </el-collapse>
       <el-collapse @change="handleChange">
-        <el-collapse-item title="Display/Hide Chart" name="1">
+        <el-collapse-item title="Scatter" name="1">
           <div v-if="displayChart">
             <vue-apex-charts height="350px" type="scatter" :options="options2" :series="series2"></vue-apex-charts>
           </div>
@@ -80,13 +93,13 @@ export default {
   data() {
     return {
       displayChart: false,
+      displayChartStages: false,
       radio1: "1",
       loading: true,
       event: this.$route.params.event,
       results: [],
       resultsByCategory: {},
       selectedResults: [],
-
       selectedCourse: "",
       selectedCategory: "Total",
       error: "",
@@ -123,6 +136,13 @@ export default {
   },
 
   methods: {
+    getTotalPos(result) {
+      let data = [];
+      for (let i = 1; i < this.noOfStages + 1; i++) {
+        data.push(result[`TotalPos${i}`]);
+      }
+      return data;
+    },
     sortResults() {
       this.results.sort((a, b) => {
         if (typeof a.PlacePoints === "string") {
@@ -138,6 +158,9 @@ export default {
     handleChange: function() {
       this.displayChart = !this.displayChart;
     },
+    handleChangeStages: function() {
+      this.displayChartStages = !this.displayChartStages;
+    },
 
     updateSelectedList: function(result) {
       result.selected == true
@@ -146,6 +169,69 @@ export default {
     }
   },
   computed: {
+    noOfStages() {
+      let count = 0;
+      Object.keys(this.results[0]).forEach(key => {
+        if (key.slice(0, 11) == "ControlName") count++;
+      });
+      return count;
+    },
+    optionsStages() {
+      return {
+        chart: {
+          height: 450,
+          zoom: {
+            enabled: false
+          }
+        },
+        dataLabels: {
+          enabled: false
+        },
+        stroke: {
+          curve: "straight",
+          width: 5
+        },
+
+        // grid: {
+        //   row: {
+        //     colors: ["#f3f3f3", "transparent"], // takes an array which will be repeated on columns
+        //     opacity: 0.5
+        //   }
+        // },
+        xaxis: {
+          title: {
+            text: "Stage",
+            rotate: 90
+          },
+          categories: this.noOfStages
+        },
+        yaxis: {
+          title: {
+            text: "Position"
+          },
+          //!not working
+          decimalsInFloat: 0,
+          forceNiceScale: true
+        }
+      };
+    },
+
+    //Todo: pohendli data
+    seriesStages() {
+      var series = [];
+      if (this.selectedResults.length > 0) {
+        this.selectedResults.forEach(element => {
+          if (element.Time !== "") {
+            series.push({
+              name: element.Name,
+              data: this.getTotalPos(element)
+            });
+          }
+        });
+      }
+      return series;
+    },
+
     options2() {
       return {
         chart: {
@@ -220,13 +306,6 @@ export default {
         });
       }
       return series;
-    },
-    noOfStages() {
-      let count = 0;
-      Object.keys(this.results[0]).forEach(key => {
-        if (key.slice(0, 11) == "ControlName") count++;
-      });
-      return count;
     }
   }
 };

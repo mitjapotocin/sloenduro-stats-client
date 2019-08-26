@@ -12,11 +12,11 @@
           </router-link>
         </th>
 
-        <th>
+        <!-- <th>
           <router-link :to="{ name: 'standings', params: {}}">
             <a>Standings</a>
           </router-link>
-        </th>
+        </th>-->
       </tr>
     </div>
   </div>
