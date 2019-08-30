@@ -15,7 +15,7 @@ Vue.use(VueRouter);
 
 const routes = [
   { path: "/", name: "home", component: Home },
-  { path: "/vents/:event", name: "event", component: Event },
+  { path: "/events/:event", name: "event", component: Event },
   { path: "/riders/:name", name: "rider", component: Rider },
   { path: "/standings", name: "standings", component: Standings }
 ];

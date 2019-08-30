@@ -211,7 +211,13 @@ export default {
           },
           //!not working
           decimalsInFloat: 0,
-          forceNiceScale: true
+          forceNiceScale: true,
+          labels: {
+            show: true,
+            formatter: function(value) {
+              return `${value.toFixed(0)}.`;
+            }
+          }
         }
       };
     },

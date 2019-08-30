@@ -1,6 +1,12 @@
 <template>
   <div>
-    <el-table ref="multipleTable" :data="results" style="width: 100%">
+    <!-- <el-input placeholder="Type to search" v-model="search"></el-input> -->
+    <el-input placeholder="Search by name" v-model="search" prefix-icon="el-icon-search"></el-input>
+    <el-table
+      ref="multipleTable"
+      :data="results.filter(data => !search || data.Name.toLowerCase().includes(search.toLowerCase()))"
+      style="width: 100%"
+    >
       <el-table-column v-if="isTotalCategory" property="PlacePoints" label="Pos." width="50"></el-table-column>
       <el-table-column v-if="!isTotalCategory" property="CategoryPosition" label="Pos." width="50"></el-table-column>
       <el-table-column property="Name" label="Name" width="250">
@@ -38,11 +44,18 @@ export default {
   props: { results: Array, isTotalCategory: Boolean },
   data() {
     return {
+      search: "",
+      input: "",
       loading: true
     };
   },
   created() {},
   methods: {
+    removeComaAtTheEnd(string) {
+      if (string[length(string - 1)] === ",") {
+        return string.pop();
+      } else return string;
+    },
     toggleSelected: async function(result) {
       result.selected = !result.selected;
       await this.$parent.updateSelectedList(result);
